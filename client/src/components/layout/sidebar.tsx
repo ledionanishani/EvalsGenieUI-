@@ -74,10 +74,17 @@ export function Sidebar({ className }: SidebarProps) {
           <div className="px-2 mb-2 text-xs font-medium text-muted-foreground/70 uppercase tracking-wider">Platform</div>
           <nav className="space-y-1">
             <Link href="/">
-              <a className={cn("flex items-center gap-2 px-2 py-1.5 text-sm font-medium rounded-md transition-colors", 
+              <a className={cn("flex items-center gap-2 px-2 py-1.5 text-sm font-medium rounded-md transition-colors",
                 isActive("/") ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50")}>
-                <LayoutDashboard className="w-4 h-4" />
+                <Home className="w-4 h-4" />
                 Home
+              </a>
+            </Link>
+            <Link href="/dashboard">
+              <a className={cn("flex items-center gap-2 px-2 py-1.5 text-sm font-medium rounded-md transition-colors",
+                isActive("/dashboard") ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-muted-foreground hover:text-foreground hover:bg-sidebar-accent/50")}>
+                <LayoutDashboard className="w-4 h-4" />
+                Dashboard
               </a>
             </Link>
           </nav>

@@ -9,6 +9,7 @@ from domains import router as domains_router
 from context import router as context_router
 from documents import router as documents_router
 from evaluation import router as evaluation_router
+from dashboard import router as dashboard_router
 from models import Domain
 
 # Load environment variables
@@ -69,6 +70,7 @@ app.include_router(domains_router, prefix="/api/v1/domains", tags=["Domains"])
 app.include_router(context_router, prefix="/api/v1", tags=["Context Assets"])
 app.include_router(documents_router, prefix="/api/v1", tags=["RAG Documents"])
 app.include_router(evaluation_router, prefix="/api/v1", tags=["Evaluation & Metrics"])
+app.include_router(dashboard_router, prefix="/api/v1/dashboard", tags=["Dashboard"])
 
 @app.get("/healthz")
 async def health_check():

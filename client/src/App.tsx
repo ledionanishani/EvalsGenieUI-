@@ -7,6 +7,7 @@ import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
+import Dashboard from "@/pages/dashboard";
 import DomainGeneral from "./pages/domain/general";
 import DomainSchemas from "./pages/domain/schemas";
 import DomainTraining from "./pages/domain/training";
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/login" component={Login} />
       <Route path="/signup" component={Signup} />
+      <Route path="/dashboard" component={Dashboard} />
       
       {/* Domain Editor Routes */}
       <Route path="/domain/:id" component={DomainGeneral} />

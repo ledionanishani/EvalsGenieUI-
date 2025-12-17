@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Play, CheckCircle2, XCircle, AlertCircle, Plus, Trash2 } from "lucide-react";
+import { Play, CheckCircle2, XCircle, AlertCircle, Plus, Trash2, CheckCircle } from "lucide-react";
 import { useRoute } from "wouter";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, TestSet, TestSetCreate } from "@/lib/api";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent } from "@/components/ui/card";
 
 export default function TestSets() {
   const [, params] = useRoute("/domain/:id/test-sets");
@@ -32,6 +33,17 @@ export default function TestSets() {
     queryFn: () => api.testSets.list(domainId!),
     enabled: !!domainId,
   });
+
+  // Fetch metrics for production readiness
+  const { data: metrics } = useQuery({
+    queryKey: ["metrics", domainId],
+    queryFn: () => api.evaluation.getMetrics(domainId!),
+    enabled: !!domainId,
+  });
+
+  // Calculate production readiness
+  const isProductionReady = metrics && metrics.pass_rate >= 95;
+  const readinessStatus = isProductionReady ? "Production Ready" : "Needs Improvement";
 
   // Create test set mutation
   const createMutation = useMutation({
@@ -205,6 +217,94 @@ export default function TestSets() {
             </Button>
           </div>
         </div>
+
+        {/* Production Readiness Section */}
+        {metrics && (
+          <Card className="border-2 border-green-200 bg-green-50/30">
+            <CardContent className="p-6">
+              <div className="flex items-start justify-between mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">Production Readiness</h2>
+                <Badge
+                  className={`text-sm px-4 py-1 ${
+                    isProductionReady
+                      ? "bg-green-600 hover:bg-green-700 text-white"
+                      : "bg-amber-600 hover:bg-amber-700 text-white"
+                  }`}
+                >
+                  {readinessStatus}
+                </Badge>
+              </div>
+
+              <div className="flex items-start gap-4 mb-6">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
+                  isProductionReady ? "bg-green-600" : "bg-amber-600"
+                }`}>
+                  <CheckCircle className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <p className="text-lg text-gray-700">
+                    {isProductionReady
+                      ? "This agent meets all production quality standards and is ready for deployment."
+                      : "This agent needs improvement before production deployment."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Key Metrics:</h3>
+                <div className="grid grid-cols-2 gap-x-12 gap-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Pass Rate:</span>
+                    <span className={`font-semibold text-lg ${
+                      metrics.pass_rate >= 95 ? "text-green-600" : "text-amber-600"
+                    }`}>
+                      {metrics.pass_rate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Hallucination:</span>
+                    <span className={`font-semibold text-lg ${
+                      metrics.hallucination_rate <= 5 ? "text-green-600" : "text-amber-600"
+                    }`}>
+                      {metrics.hallucination_rate.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Factuality:</span>
+                    <span className="font-semibold text-lg text-green-600">
+                      {(100 - metrics.hallucination_rate).toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-700">Consistency:</span>
+                    <span className="font-semibold text-lg text-green-600">
+                      {metrics.overall_score.toFixed(1)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Recommendations:</h3>
+                <ul className="list-disc list-inside space-y-2 text-gray-700">
+                  {isProductionReady ? (
+                    <li>Continue monitoring performance to maintain production quality</li>
+                  ) : (
+                    <>
+                      {metrics.pass_rate < 95 && (
+                        <li>Improve pass rate to at least 95% before production deployment</li>
+                      )}
+                      {metrics.hallucination_rate > 5 && (
+                        <li>Reduce hallucination rate to below 5% for production readiness</li>
+                      )}
+                      <li>Add more test cases to improve coverage and reliability</li>
+                    </>
+                  )}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         <div className="bg-white rounded-lg border shadow-sm">
           {isLoading ? (
