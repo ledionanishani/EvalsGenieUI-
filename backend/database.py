@@ -21,16 +21,18 @@ async def connect_to_mongo():
         # Use certifi for SSL certificate verification
         client = AsyncIOMotorClient(
             MONGODB_URI,
+            tls=True,
             tlsCAFile=certifi.where(),
-            serverSelectionTimeoutMS=5000,
-            connectTimeoutMS=10000
+            serverSelectionTimeoutMS=30000,
+            connectTimeoutMS=30000
         )
         database = client[DATABASE_NAME]
         # Verify connection
         await client.admin.command('ping')
-        print(f"✓ Connected to MongoDB at {MONGODB_URI}")
+        print("✓ Connected to MongoDB")
     except Exception as e:
         print(f"✗ Failed to connect to MongoDB: {e}")
+        print("Tip: If using MongoDB Atlas, ensure your IP is whitelisted (0.0.0.0/0 for Render).")
         raise
 
 async def close_mongo_connection():
