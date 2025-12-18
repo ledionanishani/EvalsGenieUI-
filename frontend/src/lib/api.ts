@@ -3,7 +3,9 @@
  * Handles all communication with the backend API
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use environment variable if set, otherwise use relative path for production
+// In production, frontend and backend should be on same domain or VITE_API_URL should be set
+const API_BASE_URL = import.meta.env.VITE_API_URL || '';
 
 /**
  * Token management
