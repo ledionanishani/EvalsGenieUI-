@@ -1,6 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from dotenv import load_dotenv
 import os
+import certifi
 
 # Load environment variables
 load_dotenv()
@@ -17,7 +18,13 @@ async def connect_to_mongo():
     """Connect to MongoDB"""
     global client, database
     try:
-        client = AsyncIOMotorClient(MONGODB_URI)
+        # Use certifi for SSL certificate verification
+        client = AsyncIOMotorClient(
+            MONGODB_URI,
+            tlsCAFile=certifi.where(),
+            serverSelectionTimeoutMS=5000,
+            connectTimeoutMS=10000
+        )
         database = client[DATABASE_NAME]
         # Verify connection
         await client.admin.command('ping')
