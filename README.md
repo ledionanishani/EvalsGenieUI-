@@ -1,6 +1,7 @@
 # EvalsGenie - AI Agent Evaluation Platform
 
 Domain-aware, no-code AI evaluation platform that empowers enterprise teams to validate AI agents.
+<img width="1170" height="654" alt="image" src="https://github.com/user-attachments/assets/ffb3e8ce-0883-4706-a66d-4ff6b57db4b4" />
 
 ## Project Structure
 
